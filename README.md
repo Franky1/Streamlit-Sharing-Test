@@ -12,9 +12,8 @@ Public repo for testing with streamlit sharing runtime.
 - [x] single file app
 - [x] use st.cache decorator
 - [ ] beautify the app
-- [ ] download report as txt file with jinja2(?)
-- [ ] add try of pip package import (with dropdown?)
-- [ ] show import names instead of pip package names
+- [x] add try of pip package import (with dropdown)
+- [x] show import names instead of pip package names
 - [ ] add packages.txt
 - [ ] interactively install apt packages(?)
 - [ ] interactively install pip packages(?)

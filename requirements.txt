@@ -1,2 +1,2 @@
 psutil
-streamlit
+importlib_metadata

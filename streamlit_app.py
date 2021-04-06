@@ -9,6 +9,7 @@ import sys
 import uuid
 
 # external libraries
+import importlib_metadata
 import psutil
 import streamlit as st
 
@@ -32,11 +33,11 @@ def getSystemInfoDict():
         logging.exception(e)
         return e
 
-@st.cache
-def split_pip_freeze(output):
-    lines = output.splitlines()
-    packages = list([x.split("==", 1)[0].strip() for x in lines])
-    return packages
+
+# def split_pip_freeze(output):
+#     lines = output.splitlines()
+#     packages = list([x.split("==", 1)[0].strip() for x in lines])
+#     return packages
 
 
 @st.cache
@@ -47,6 +48,16 @@ def get_subprocess_pip_freeze():
 @st.cache
 def get_subprocess_apt_list():
     return subprocess.getstatusoutput(r'apt list --installed')
+
+
+@st.cache
+def get_packages_distributions():
+    packages = importlib_metadata.packages_distributions()
+    packages = list(x for x in packages)
+    packages = list(filter(lambda x: not x[:1].isdigit(), packages))
+    packages = list(filter(lambda x: not x.startswith('_'), packages))
+    packages = list(filter(lambda x: not any(e in x for e in r'\/'), packages))
+    return packages
 
 
 def st_get_python_version():
@@ -67,6 +78,16 @@ def st_get_system_version():
         st.code(sysinfos, language='logging')
 
 
+def st_get_apt_packages():
+    st.header("Apt Packages")
+    exitcode, output = get_subprocess_apt_list()
+    if exitcode:
+        st.warning('FAILED: apt list --installed')
+        st.code(output, language='logging')
+    else:
+        st.code(output, language='logging')
+
+
 def st_get_pip_freeze():
     st.header("Pip Packages - pip freeze")
     exitcode, output = get_subprocess_pip_freeze()
@@ -78,25 +99,26 @@ def st_get_pip_freeze():
     return exitcode, output
 
 
-def st_get_apt_packages():
-    st.header("Apt Packages")
-    exitcode, output = get_subprocess_apt_list()
-    if exitcode:
-        st.warning('FAILED: apt list --installed')
-        st.code(output, language='logging')
-    else:
-        st.code(output, language='logging')
+def st_get_packages_distributions():
+    st.header("Pip Packages - packages_distributions")
+    packages = get_packages_distributions()
+    output = '\n'.join(packages)
+    st.code(output, language='logging')
+    return packages
 
 
-def st_test_pip_import(output):
+def st_test_pip_import(packages):
     st.header("Test pip package import")
-    option = st.selectbox(label='Select pip package:', options=split_pip_freeze(output))
-    st.write('You selected:', option)
-    try:
-        importlib.import_module(option)
-    except ImportError as e:
-        logging.exception(e)
-        st.error(e)
+    option = st.selectbox(label='Select pip module:', options=packages)
+    st.write('You selected module:', option)
+    if st.button('Import selected pip module'):
+        try:
+            importlib.import_module(option)
+        except ImportError as e:
+            logging.exception(e)
+            st.error(e)
+        else:
+            st.info(f'sucessfully imported {option}')
 
 
 if __name__ == "__main__":
@@ -109,10 +131,9 @@ if __name__ == "__main__":
     st_get_system_version()
     st_get_apt_packages()
     exitcode, output = st_get_pip_freeze()
-    # if not exitcode:
-    #     st_test_pip_import(output)
+    packages = st_get_packages_distributions()
+    st_test_pip_import(packages)
 
 # TODO: add apt install
 # TODO: add pip install
-# TODO: add pip import
 # TODO: add export of report
