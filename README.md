@@ -38,6 +38,14 @@ apt list --installed
 
 ## Checking pip packages
 
+### Manually with OS tools
+
+```sh
+pip freeze
+```
+
+### importlib
+
 - <https://docs.python.org/3/library/importlib.html>
 - <https://docs.python.org/3/library/importlib.metadata.html>
 - <https://importlib-metadata.readthedocs.io/en/latest/>
