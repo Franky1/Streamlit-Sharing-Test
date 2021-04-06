@@ -71,7 +71,7 @@ def st_get_system_version():
     sysinfos = getSystemInfoDict()
     if isinstance(sysinfos, dict):
         for key, value in sysinfos.items():
-            codeblock += f"{key} : {value}\n"
+            codeblock += f"{key <18} : {value}\n"
         st.code(codeblock, language='logging')
     else:
         st.error('Acquisition of system infos failed')
@@ -79,7 +79,7 @@ def st_get_system_version():
 
 
 def st_get_apt_packages():
-    st.header("Apt Packages")
+    st.header("Apt Packages - dpkg-query")
     exitcode, output = get_subprocess_apt_list()
     if exitcode:
         st.warning('FAILED: dpkg-query --show --showformat')
@@ -101,7 +101,7 @@ def st_get_pip_freeze():
 
 
 def st_get_packages_distributions():
-    st.header("Pip Packages - packages_distributions")
+    st.header("Pip Modules - importlib_metadata.packages_distributions")
     packages = get_packages_distributions()
     output = '\n'.join(packages)
     st.code(output, language='logging')
