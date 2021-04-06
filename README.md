@@ -36,6 +36,12 @@ Public repo for testing with streamlit sharing runtime.
 apt list --installed
 ```
 
+## Checking pip packages
+
+- <https://docs.python.org/3/library/importlib.html>
+- <https://docs.python.org/3/library/importlib.metadata.html>
+- <https://importlib-metadata.readthedocs.io/en/latest/>
+
 ---
 
 ## Status
