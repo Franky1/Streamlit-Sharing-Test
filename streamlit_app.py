@@ -2,11 +2,9 @@
 import importlib
 import logging
 import platform
-import re
 import socket
 import subprocess
 import sys
-import uuid
 
 # external libraries
 import importlib_metadata
@@ -24,7 +22,6 @@ def getSystemInfoDict():
         info['architecture'] = platform.machine()
         info['hostname'] = socket.gethostname()
         info['ip-address'] = socket.gethostbyname(socket.gethostname())
-        info['mac-address'] = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
         info['processor'] = platform.processor()
         info['ram'] = str(
             round(psutil.virtual_memory().total / (1024.0 ** 3)))+" GB"
@@ -47,7 +44,8 @@ def get_subprocess_pip_freeze():
 
 @st.cache
 def get_subprocess_apt_list():
-    return subprocess.getstatusoutput(r'apt list --installed')
+    # return subprocess.getstatusoutput(r'apt list --installed')
+    return subprocess.getstatusoutput(r'dpkg -l')
 
 
 @st.cache
@@ -82,7 +80,8 @@ def st_get_apt_packages():
     st.header("Apt Packages")
     exitcode, output = get_subprocess_apt_list()
     if exitcode:
-        st.warning('FAILED: apt list --installed')
+        st.warning('FAILED: dpkg -l')
+        # st.warning('FAILED: apt list --installed')
         st.code(output, language='logging')
     else:
         st.code(output, language='logging')
