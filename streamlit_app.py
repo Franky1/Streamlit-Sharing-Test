@@ -46,7 +46,7 @@ def get_subprocess_pip_freeze():
 def get_subprocess_apt_list():
     # return subprocess.getstatusoutput(r'apt list --installed')
     # return subprocess.getstatusoutput(r'dpkg -l')
-    return subprocess.getstatusoutput(r"dpkg-query --show --showformat='${Package;-24} ${Version;-24} \t${binary:Synopsis}\n'")
+    return subprocess.getstatusoutput(r"dpkg-query --show --showformat='${Package;-26} ${Version;-24} \t${binary:Synopsis}\n'")
 
 
 @st.cache
