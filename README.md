@@ -23,18 +23,19 @@ Public repo for testing with streamlit sharing runtime.
 
 ## Checking apt packages
 
-### python-apt
-
-> Not cross-platform, no actual pip repo package?
-
-- <https://apt-team.pages.debian.net/python-apt/contents.html>
-- <https://salsa.debian.org/apt-team/python-apt>
-
 ### Manually with OS tools
 
 ```sh
 apt list --installed
 ```
+
+### python-apt
+
+> No cross-platform
+> No actual pip repo package?
+
+- <https://apt-team.pages.debian.net/python-apt/contents.html>
+- <https://salsa.debian.org/apt-team/python-apt>
 
 ## Checking pip packages
 
