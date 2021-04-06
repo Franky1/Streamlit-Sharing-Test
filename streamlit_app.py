@@ -46,7 +46,7 @@ def get_subprocess_pip_freeze():
 def get_subprocess_apt_list():
     # return subprocess.getstatusoutput(r'apt list --installed')
     # return subprocess.getstatusoutput(r'dpkg -l')
-    return subprocess.getstatusoutput(r'dpkg --show --showformat="${binary:Package}\t${Version}\t${Description}\n"')
+    return subprocess.getstatusoutput(r"dpkg --show --showformat='${binary:Package}\t${Version}\t${Description}\n'")
 
 
 @st.cache
@@ -82,7 +82,7 @@ def st_get_apt_packages():
     st.header("Apt Packages")
     exitcode, output = get_subprocess_apt_list()
     if exitcode:
-        st.warning('FAILED: dpkg -l')
+        st.warning('FAILED: dpkg --show --showformat')
         # st.warning('FAILED: apt list --installed')
         st.code(output, language='logging')
     else:
