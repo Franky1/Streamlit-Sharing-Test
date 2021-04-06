@@ -24,8 +24,12 @@ Public repo for testing with streamlit sharing runtime.
 
 ### Manually with OS tools
 
+<https://man7.org/linux/man-pages/man1/dpkg-query.1.html>
+
 ```sh
 apt list --installed
+dpkg --list
+dpkg --show --showformat=format
 ```
 
 ### python-apt

@@ -45,7 +45,8 @@ def get_subprocess_pip_freeze():
 @st.cache
 def get_subprocess_apt_list():
     # return subprocess.getstatusoutput(r'apt list --installed')
-    return subprocess.getstatusoutput(r'dpkg -l')
+    # return subprocess.getstatusoutput(r'dpkg -l')
+    return subprocess.getstatusoutput(r'dpkg --show --showformat="${binary:Package}\t${Version}\t${Description}\n"')
 
 
 @st.cache
@@ -55,6 +56,7 @@ def get_packages_distributions():
     packages = list(filter(lambda x: not x[:1].isdigit(), packages))
     packages = list(filter(lambda x: not x.startswith('_'), packages))
     packages = list(filter(lambda x: not any(e in x for e in r'\/'), packages))
+    packages = sorted(packages)
     return packages
 
 
