@@ -71,7 +71,7 @@ def st_get_system_version():
     sysinfos = getSystemInfoDict()
     if isinstance(sysinfos, dict):
         for key, value in sysinfos.items():
-            codeblock += f"{key <18} : {value}\n"
+            codeblock += f"{key: <18} : {value}\n"
         st.code(codeblock, language='logging')
     else:
         st.error('Acquisition of system infos failed')
