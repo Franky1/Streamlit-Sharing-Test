@@ -11,7 +11,7 @@ Public repo for testing with streamlit sharing runtime.
 - [x] add apt packages listing
 - [x] single file app
 - [x] use st.cache decorator
-- [ ] beautify the app
+- [ ] make the frontend more beautiful
 - [ ] use st.table instead of codeblocks
 - [x] add try of pip package import (with dropdown)
 - [x] show import names instead of pip package names
@@ -19,6 +19,7 @@ Public repo for testing with streamlit sharing runtime.
 - [ ] interactively install apt packages - if possible
 - [ ] interactively install pip packages - if possible
 - [ ] add more documentation in README
+- [ ] add direct link to app in README
 
 ---
 
