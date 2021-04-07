@@ -1,5 +1,6 @@
 # standard libraries
 import importlib
+# import json
 import logging
 import platform
 import socket
@@ -8,8 +9,11 @@ import sys
 
 # external libraries
 import importlib_metadata
+# import pandas as pd
 import psutil
 import streamlit as st
+# import streamlit.components.v1 as components
+# from tabulate import tabulate
 
 
 @st.cache
@@ -31,15 +35,34 @@ def getSystemInfoDict():
         return e
 
 
-# def split_pip_freeze(output):
-#     lines = output.splitlines()
-#     packages = list([x.split("==", 1)[0].strip() for x in lines])
-#     return packages
+def split_pip_freeze(output):
+    lines = output.splitlines()
+    packages = dict()
+    for line in lines:
+        if "==" in line:
+            pkg, vers = line.split("==", 1)
+        elif "@" in line:
+            pkg, vers = line.split("@", 1)
+        else:
+            continue
+        pkg = pkg.strip()
+        vers = vers.strip()
+        packages[pkg] = vers
+    return packages
+
+
+def run_subprocess(command):
+    return subprocess.getstatusoutput(command)
 
 
 @st.cache
 def get_subprocess_pip_freeze():
     return subprocess.getstatusoutput(r'pip freeze')
+
+
+@st.cache
+def get_subprocess_pip_list():
+    return subprocess.getstatusoutput(r'pip list --format=columns')
 
 
 @st.cache
@@ -62,7 +85,8 @@ def get_packages_distributions():
 
 def st_get_python_version():
     st.header("Python Version")
-    st.code(sys.version, language='logging')
+    st.code(sys.version.replace('\n', ' '), language='logging')
+    # st.markdown(sys.version.replace('\n', ' '))
 
 
 def st_get_system_version():
@@ -100,10 +124,29 @@ def st_get_pip_freeze():
     return exitcode, output
 
 
+def st_get_pip_list():
+    st.header("Pip Packages - pip list")
+    exitcode, output = get_subprocess_pip_list()
+    if exitcode:
+        st.error('FAILED: pip list')
+        st.code(output, language='logging')
+    else:
+        st.code(output, language='logging')
+        # pip_list = json.loads(output)
+        # pip_list = list(dict({item['name'] : item['version']}) for item in pip_list)
+        # pip_list = tabulate(pip_list, headers=['Package', 'Version'], tablefmt="grid")
+        # pip_list = tabulate(pip_list, tablefmt="html")
+        # components.html(pip_list)
+        # st.json(pip_list)
+        # st.table(pd.DataFrame.from_dict(pip_list, orient='index', dtype='str', columns=['Version']))
+    return exitcode, output
+
+
 def st_get_packages_distributions():
     st.header("Pip Modules - importlib_metadata.packages_distributions")
     packages = get_packages_distributions()
     output = '\n'.join(packages)
+    # st.markdown(output)
     st.code(output, language='logging')
     return packages
 
@@ -122,17 +165,33 @@ def st_test_pip_import(packages):
             st.info(f'sucessfully imported {option}')
 
 
+def st_run_shell_commands():
+    st.header("Run shell command")
+    command = st.text_input(label="Input of shell command - Press Enter to run command")
+    # if st.button('Run command'):
+    if command:
+        exitcode, output = run_subprocess(command)
+        if exitcode:
+            st.error(f'FAILED: {command}')
+            st.code(output, language='logging')
+        else:
+            st.info(f'Success: {command}')
+            st.code(output, language='logging')
+
+
 if __name__ == "__main__":
     st.set_page_config(page_title="Streamlit Sharing", page_icon='✅',
                     layout='wide', initial_sidebar_state='collapsed')
     st.title('Streamlit Sharing Test')
-    st.text(
+    st.markdown(
         "Purpose is to show all the installed packages in the streamlit sharing runtime.")
     st_get_python_version()
     st_get_system_version()
     st_get_apt_packages()
-    exitcode, output = st_get_pip_freeze()
+    # exitcode, output = st_get_pip_freeze()
+    exitcode, output = st_get_pip_list()
     packages = st_get_packages_distributions()
+    st_run_shell_commands()
     st_test_pip_import(packages)
 
 # TODO: add apt install

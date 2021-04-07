@@ -12,6 +12,7 @@ Public repo for testing with streamlit sharing runtime.
 - [x] single file app
 - [x] use st.cache decorator
 - [ ] make the frontend more beautiful
+- [ ] change from `pip freeze` to `pip list`
 - [ ] use st.table instead of codeblocks
 - [x] add try of pip package import (with dropdown)
 - [x] show import names instead of pip package names
@@ -62,4 +63,4 @@ pip freeze
 ## Status
 
 - WORK IN PROGRESS - not finished yet
-- Last changes: 06.04.2021
+- Last changes: 07.04.2021
