@@ -1,6 +1,5 @@
 # standard libraries
 import importlib
-# import json
 import logging
 import platform
 import socket
@@ -9,7 +8,6 @@ import sys
 
 # external libraries
 import importlib_metadata
-# import pandas as pd
 import psutil
 import streamlit as st
 # import streamlit.components.v1 as components
@@ -213,6 +211,7 @@ if __name__ == "__main__":
     packages = st_get_packages_distributions()
     st_run_shell_commands()
     st_test_pip_import(packages)
+    st_rerun()
 
 # TODO: add pip install element
 # TODO: add export of report
