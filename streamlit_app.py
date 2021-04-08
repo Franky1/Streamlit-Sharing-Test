@@ -28,7 +28,7 @@ def getSystemInfoDict():
         info['ip-address'] = socket.gethostbyname(socket.gethostname())
         info['processor'] = platform.processor()
         info['ram'] = str(
-            round(psutil.virtual_memory().total / (1024.0 ** 3)))+" GB"
+            round(psutil.virtual_memory().total / (1024.0 ** 3))) + " GB"
         return info
     except Exception as e:
         logging.exception(e)
@@ -85,12 +85,16 @@ def get_packages_distributions():
 
 def st_get_python_version():
     st.header("Python Version")
+    st.markdown(
+        "Show the currently used Python version in the runtime")
     st.code(sys.version.replace('\n', ' '), language='logging')
     # st.markdown(sys.version.replace('\n', ' '))
 
 
 def st_get_system_version():
     st.header("System Information")
+    st.markdown(
+        "Show some basic system informations about the runtime")
     codeblock = str()
     sysinfos = getSystemInfoDict()
     if isinstance(sysinfos, dict):
@@ -103,7 +107,9 @@ def st_get_system_version():
 
 
 def st_get_apt_packages():
-    st.header("Apt Packages - dpkg-query")
+    st.header("Apt Packages")
+    st.markdown(
+        "List all installed `apt` packages of the runtime - acquired with `dpkg-query`")
     exitcode, output = get_subprocess_apt_list()
     if exitcode:
         st.warning('FAILED: dpkg-query --show --showformat')
@@ -125,7 +131,9 @@ def st_get_pip_freeze():
 
 
 def st_get_pip_list():
-    st.header("Pip Packages - pip list")
+    st.header("Pip Packages")
+    st.markdown(
+        "List all installed `pip` packages of the runtime - acquired with `pip list`")
     exitcode, output = get_subprocess_pip_list()
     if exitcode:
         st.error('FAILED: pip list')
@@ -143,7 +151,9 @@ def st_get_pip_list():
 
 
 def st_get_packages_distributions():
-    st.header("Pip Modules - importlib_metadata.packages_distributions")
+    st.header("Pip Modules")
+    st.markdown(
+        "List all importable python modules of the runtime - acquired with `importlib_metadata.packages_distributions`")
     packages = get_packages_distributions()
     output = '\n'.join(packages)
     # st.markdown(output)
@@ -167,6 +177,8 @@ def st_test_pip_import(packages):
 
 def st_run_shell_commands():
     st.header("Run shell command")
+    st.markdown(
+        "Here you can run any shell command in the runtime. Enter the command and press enter to start execution.")
     command = st.text_input(label="Input of shell command - Press Enter to run command")
     # if st.button('Run command'):
     if command:
@@ -184,7 +196,7 @@ if __name__ == "__main__":
                     layout='wide', initial_sidebar_state='collapsed')
     st.title('Streamlit Sharing Test')
     st.markdown(
-        "Purpose is to show all the installed packages in the streamlit sharing runtime.")
+        "This app is designed to explore the Streamlit Sharing runtime a bit.")
     st_get_python_version()
     st_get_system_version()
     st_get_apt_packages()
@@ -194,6 +206,5 @@ if __name__ == "__main__":
     st_run_shell_commands()
     st_test_pip_import(packages)
 
-# TODO: add apt install
-# TODO: add pip install
+# TODO: add pip install element
 # TODO: add export of report

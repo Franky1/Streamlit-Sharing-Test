@@ -1,40 +1,51 @@
 # Streamlit Sharing Test
 
-Public repo for testing with streamlit sharing runtime.
+Public repo for playing and testing with streamlit sharing runtime.
 
 > WORK IN PROGRESS - NOT FINISHED YET
 
+As long as the app will be available on Streamlit Sharing, it can be found at this URL:
+
+<https://share.streamlit.io/franky1/streamlit-sharing-test/main>
+
+## Features
+
+This app is designed to explore the Streamlit Sharing runtime a bit.
+
+- Show Python version of runtime
+- Show basic system information
+- List all installed apt packages
+- List all installed pip packages
+- List all importable python modules
+- Manually run shell commands in the runtime
+
+---
+
 ## ToDo
 
-- [x] add requirements.txt
-- [x] write simple streamlit app to test the sharing runtime
-- [x] add apt packages listing
-- [x] single file app
-- [x] use st.cache decorator
 - [ ] make the frontend more beautiful
-- [ ] change from `pip freeze` to `pip list`
-- [ ] use st.table instead of codeblocks
+- [ ] try tabulate
 - [x] add try of pip package import (with dropdown)
 - [x] show import names instead of pip package names
-- [ ] add packages.txt
 - [ ] interactively install apt packages - if possible
 - [ ] interactively install pip packages - if possible
 - [ ] add more documentation in README
-- [ ] add direct link to app in README
 
 ---
 
 ## Checking apt packages
 
-### Manually with OS tools
-
-<https://man7.org/linux/man-pages/man1/dpkg-query.1.html>
+### Checking apt packages manually with OS tools
 
 ```sh
 apt list --installed
 dpkg --list
-dpkg --show --showformat=format
+dpkg-query --show --showformat=format
 ```
+
+#### dpkg-query
+
+<https://man7.org/linux/man-pages/man1/dpkg-query.1.html>
 
 ### python-apt
 
@@ -46,10 +57,11 @@ dpkg --show --showformat=format
 
 ## Checking pip packages
 
-### Manually with OS tools
+### Checking pip packages manually with OS tools
 
 ```sh
 pip freeze
+pip list --format=columns
 ```
 
 ### importlib
@@ -63,4 +75,4 @@ pip freeze
 ## Status
 
 - WORK IN PROGRESS - not finished yet
-- Last changes: 07.04.2021
+- Last changes: 08.04.2021
