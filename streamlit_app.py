@@ -191,6 +191,14 @@ def st_run_shell_commands():
             st.code(output, language='logging')
 
 
+def st_rerun():
+    st.header("Rerun Streamlit App from Top")
+    st.markdown(
+        "Here you can trigger a manual rerun of the whole Streamlit App from the top.")
+    if st.button('Rerun Streamlit App'):
+        st.experimental_rerun()
+
+
 if __name__ == "__main__":
     st.set_page_config(page_title="Streamlit Sharing", page_icon='✅',
                     layout='wide', initial_sidebar_state='collapsed')

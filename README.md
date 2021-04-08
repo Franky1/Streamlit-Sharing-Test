@@ -30,6 +30,7 @@ This app is designed to explore the Streamlit Sharing runtime a bit.
 - [ ] interactively install apt packages - if possible
 - [ ] interactively install pip packages - if possible
 - [ ] add more documentation in README
+- [ ] try `st.experimental_rerun()`
 
 ---
 
