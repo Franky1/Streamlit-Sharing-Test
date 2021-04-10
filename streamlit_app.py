@@ -71,6 +71,11 @@ def get_subprocess_apt_list():
 
 
 @st.cache
+def get_subprocess_apt_sources():
+    return subprocess.getstatusoutput(r'cat /etc/apt/sources.list')
+
+
+@st.cache
 def get_packages_distributions():
     packages = importlib_metadata.packages_distributions()
     packages = list(x for x in packages)
@@ -112,6 +117,18 @@ def st_get_apt_packages():
     if exitcode:
         st.warning('FAILED: dpkg-query --show --showformat')
         # st.warning('FAILED: apt list --installed')
+        st.code(output, language='logging')
+    else:
+        st.code(output, language='logging')
+
+        
+def st_get_apt_sources():
+    st.header("Apt Sources")
+    st.markdown(
+        "List all installed `apt` sources of the runtime - acquired with `cat /etc/apt/sources.list`")
+    exitcode, output = get_subprocess_apt_sources()
+    if exitcode:
+        st.warning('FAILED: cat /etc/apt/sources.list')
         st.code(output, language='logging')
     else:
         st.code(output, language='logging')
@@ -206,6 +223,7 @@ if __name__ == "__main__":
     st_get_python_version()
     st_get_system_version()
     st_get_apt_packages()
+    st_get_apt_sources()
     # exitcode, output = st_get_pip_freeze()
     exitcode, output = st_get_pip_list()
     packages = st_get_packages_distributions()
