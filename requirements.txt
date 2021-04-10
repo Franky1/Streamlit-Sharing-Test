@@ -1,3 +1,5 @@
 psutil
+pipdeptree
 importlib_metadata
+plotly
 streamlit
