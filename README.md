@@ -65,6 +65,10 @@ pip freeze
 pip list --format=columns
 ```
 
+### piptree
+
+- <https://github.com/naiquevin/pipdeptree>
+
 ### importlib
 
 - <https://docs.python.org/3/library/importlib.html>
@@ -76,4 +80,4 @@ pip list --format=columns
 ## Status
 
 - WORK IN PROGRESS - not finished yet
-- Last changes: 08.04.2021
+- Last changes: 10.04.2021
