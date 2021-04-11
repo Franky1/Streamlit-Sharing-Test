@@ -1,6 +1,7 @@
 # standard libraries
 import base64
 import importlib
+import json
 import logging
 import platform
 import socket
@@ -69,7 +70,7 @@ def get_subprocess_pip_list():
 
 @st.cache
 def get_subprocess_pipdeptree():
-    return subprocess.getstatusoutput(r'pipdeptree')
+    return subprocess.getstatusoutput(r'pipdeptree --json')
 
 
 @st.cache
@@ -209,6 +210,27 @@ def st_get_pip_list():
     return output
 
 
+def get_dependencies(jsonified):
+    dependencies = str()
+    if jsonified:
+        for pkg in jsonified:
+            pkg_str = f"{pkg['key']}:{pkg['package_name']}:{pkg['installed_version']}:{pkg['required_version']}"
+            dependencies += f"{pkg_str}\n"
+    return dependencies
+
+
+def get_dict_from_pipdeptree(jsonified):
+    pkgs = list()
+    deps = list()
+    for elem in jsonified:
+        pkg = elem.get('package')
+        pkg_str = f"{pkg['key']}:{pkg['package_name']}:{pkg['installed_version']}"
+        pkgs.append(pkg_str)
+        # FIXME: deps are empty:
+        deps.append(get_dependencies(pkg.get('dependencies')))
+    return pkgs, deps
+
+
 def st_get_pipdeptree():
     st.markdown("---")
     st.header("🐍 Pipdeptree Output")
@@ -216,10 +238,11 @@ def st_get_pipdeptree():
         "List all installed python packages of the runtime - acquired with **`pipdeptree`**")
     exitcode, output = get_subprocess_pipdeptree()
     if exitcode:
-        st.warning('FAILED: dpkg-query --show --showformat')
+        st.warning('FAILED: pipdeptree --json')
         st.code(output, language='logging')
     else:
-        st.code(output, language='logging')
+        jsonified = json.loads(output)
+        st.code(get_dict_from_pipdeptree(jsonified), language='logging')
     return output
 
 
