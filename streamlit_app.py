@@ -65,7 +65,7 @@ def get_subprocess_pip_freeze():
 
 @st.cache
 def get_subprocess_pip_list():
-    return subprocess.getstatusoutput(r'pip list --format columns')
+    return subprocess.getstatusoutput(r'pip list --format json')
 
 
 @st.cache
@@ -112,17 +112,21 @@ def ploty_fig_table_factory(header, cells):
         header=dict(values=header,
                     line_color='#eeeeee',
                     fill_color='#B362FF',
-                    height=34),
+                    align='left',
+                    # height=40
+                    ),
         cells=dict(values=cells,
                     line_color='#eeeeee',
-                    fill_color='#A599E9',
-                    height=26))
+                    fill_color='#2D2B55',
+                    align='left',
+                    # height=30
+                    ))
         ])
     fig.update_layout(margin_l=0, margin_r=0, margin_t=10, margin_b=0)
-    fig.update_layout(font_family="verdana")
-    fig.update_layout(font_size=14)
-    # fig.update_layout(autosize=True)  # does not work
-    fig.update_layout(height=28*len(cells[0])+40)  # dynamic height
+    fig.update_layout(font_family="Arial", font_size=14)
+    fig.update_layout(dragmode="select", selectdirection="v")
+    fig.update_layout(autosize=True)  # does not work
+    # fig.update_layout(height=28*len(cells[0])+40)  # dynamic height
     return fig
 
 
@@ -134,8 +138,8 @@ def st_get_system_version():
     codeblock = str()
     sysinfos = getSystemInfoDict()
     if isinstance(sysinfos, dict):
-        for key, value in sysinfos.items():
-            codeblock += f"{key.capitalize(): <17}: {value}\n"
+        # for key, value in sysinfos.items():
+        #     codeblock += f"{key.capitalize(): <17}: {value}\n"
         # st.code(codeblock, language='logging')
         fig = ploty_fig_table_factory(
             header=['Parameter', 'Value'],
@@ -189,6 +193,15 @@ def st_get_pip_freeze():
     return output
 
 
+def get_dict_from_piplist(jsonified):
+    packages = dict()
+    for elem in jsonified:
+        pkg = elem.get('name')
+        ver = elem.get('version')
+        packages[pkg] = ver
+    return dict(sorted(packages.items()))
+
+
 def st_get_pip_list():
     st.markdown("---")
     st.header("🐍 Pip Packages")
@@ -199,7 +212,19 @@ def st_get_pip_list():
         st.error('FAILED: pip list')
         st.code(output, language='logging')
     else:
-        st.code(output, language='logging')
+        jsonified = json.loads(output)
+        jsonified = get_dict_from_piplist(jsonified)
+        if isinstance(jsonified, dict):
+            header1 = "Package<br>"
+            header2 = "Version<br>"
+            fig = ploty_fig_table_factory(
+                header=[header1, header2],
+                cells=[list(jsonified.keys()), list(jsonified.values())])
+            config = {'displayModeBar': False}
+            st.plotly_chart(fig, use_container_width=True, config=config)
+
+        # st.json(jsonified)
+        # st.code(output, language='logging')
         # pip_list = json.loads(output)
         # pip_list = list(dict({item['name'] : item['version']}) for item in pip_list)
         # pip_list = tabulate(pip_list, headers=['Package', 'Version'], tablefmt="grid")
@@ -215,20 +240,18 @@ def get_dependencies(jsonified):
     if jsonified:
         for pkg in jsonified:
             pkg_str = f"{pkg['key']}:{pkg['package_name']}:{pkg['installed_version']}:{pkg['required_version']}"
-            dependencies += f"{pkg_str}\n"
+            dependencies += f"{pkg_str}<br>"
     return dependencies
 
 
 def get_dict_from_pipdeptree(jsonified):
-    pkgs = list()
-    deps = list()
+    packages = dict()
     for elem in jsonified:
         pkg = elem.get('package')
-        pkg_str = f"{pkg['key']}:{pkg['package_name']}:{pkg['installed_version']}"
-        pkgs.append(pkg_str)
-        # FIXME: deps are empty:
-        deps.append(get_dependencies(pkg.get('dependencies')))
-    return pkgs, deps
+        pkg_str = f"{pkg['key']}:{pkg['package_name']}:{pkg['installed_version']}<br>"
+        dep = get_dependencies(elem.get('dependencies'))
+        packages[pkg_str] = dep
+    return dict(sorted(packages.items()))
 
 
 def st_get_pipdeptree():
@@ -242,7 +265,17 @@ def st_get_pipdeptree():
         st.code(output, language='logging')
     else:
         jsonified = json.loads(output)
-        st.code(get_dict_from_pipdeptree(jsonified), language='logging')
+        jsonified = get_dict_from_pipdeptree(jsonified)
+        if isinstance(jsonified, dict):
+            header1 = "Package<br>key:package_name:installed_version"
+            header2 = "Dependencies<br>key:package_name:installed_version:required_version"
+            fig = ploty_fig_table_factory(
+                header=[header1, header2],
+                cells=[list(jsonified.keys()), list(jsonified.values())])
+            config = {'displayModeBar': False}
+            st.plotly_chart(fig, use_container_width=True, config=config)
+        # else:
+        #     st.code(get_dict_from_pipdeptree(jsonified), language='logging')
     return output
 
 
@@ -343,7 +376,7 @@ if __name__ == "__main__":
     # output_text['freeze'] = st_get_pip_freeze()
     output_text['pip'] = st_get_pip_list()
     output_text['pipdeptree'] = st_get_pipdeptree()
-    output_text['modules'] = st_get_packages_distributions()
+    # output_text['modules'] = st_get_packages_distributions()
     st_download_info(output_text)
     # st_run_shell_commands()
     # st_test_pip_import(packages)

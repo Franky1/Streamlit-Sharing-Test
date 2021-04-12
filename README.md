@@ -25,10 +25,9 @@ This app is designed to explore the Streamlit Sharing runtime a bit.
 
 ## ToDo
 
-- [ ] use `pip list --format json`
-- [x] use `pipdeptree --json`
-- [ ] make dicts from subprocess calls or json for plotly tables
 - [ ] adjust color theme for plotly tables
+- [ ] fix plotly table issues
+- [ ] fix plotly table height
 - [ ] add more documentation in README
 
 ---
