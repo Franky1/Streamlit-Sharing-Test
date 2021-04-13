@@ -31,6 +31,19 @@ This app is designed to explore the Streamlit Sharing runtime a bit.
 
 ---
 
+## Printing Pretty Tables with Python
+
+- tabulate <https://github.com/astanin/python-tabulate>
+- beautifultable <https://github.com/pri22296/beautifultable>
+- prettytable <https://github.com/jazzband/prettytable>
+
+### Tutorials
+
+- <https://www.youtube.com/watch?v=zfZuM3TmYS4>
+  - <https://pythonprogramming.altervista.org/create-a-beautiful-html-table-with-python/>
+
+---
+
 ## Checking apt packages
 
 ### Checking apt packages manually with OS tools
