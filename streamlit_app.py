@@ -137,7 +137,7 @@ def get_apt_package_list(output):
     for line in lines:
         a, b, c = line.split(maxsplit=2)
         out.append([a, b, c])
-    # transpose
+    out =  [*zip(*out)]  # Transpose the 2D array of cells
     return out
 
 
