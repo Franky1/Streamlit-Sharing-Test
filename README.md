@@ -104,14 +104,16 @@ A Dockerfile is also provided for local testing of the Streamlit app.
 
 ```sh
 docker build -t franky1/streamlit:latest .
-docker run -ti -p 8080:8080 --rm franky1/streamlit:latest
-docker run -ti -p 8080:8080 -v $(pwd):/app --rm franky1/streamlit:latest  # linux
-docker run -ti -p 8080:8080 -v ${pwd}:/app --rm franky1/streamlit:latest  # powershell
-docker run -ti -p 8080:8080 -v %cd%:/app --rm franky1/streamlit:latest  # cmd.exe
+docker run -ti -p 8501:8501 --rm franky1/streamlit:latest
+docker run -ti -p 8501:8501 -v $(pwd):/app --rm franky1/streamlit:latest  # linux
+docker run -ti -p 8501:8501 -v ${pwd}:/app --rm franky1/streamlit:latest  # powershell
+docker run -ti -p 8501:8501 -v %cd%:/app --rm franky1/streamlit:latest  # cmd.exe
 docker run -ti --rm python:3.7.10-slim /bin/bash # testing python container
 ```
 
-Open local docker streamlit app site: <http://localhost:8080/>
+Open local docker streamlit app site: <http://localhost:8501/>
+
+Port `8501` is the default port for Streamlit.
 
 ---
 
