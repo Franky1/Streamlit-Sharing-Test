@@ -137,6 +137,7 @@ def get_apt_package_list(output):
     for line in lines:
         a, b, c = line.split(maxsplit=2)
         out.append([a, b, c])
+    # transpose
     return out
 
 
@@ -205,7 +206,6 @@ def st_get_pip_list():
         jsonified = json.loads(output)
         jsonified = get_dict_from_piplist(jsonified)
         if isinstance(jsonified, dict):
-            jsonified = sorted(jsonified.items())
             headers = ["Package", "Version"]
             cells=[list(jsonified.keys()), list(jsonified.values())]
             st.markdown(tabulate_table_factory(headers, cells, showindex=True))
