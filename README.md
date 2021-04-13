@@ -25,11 +25,8 @@ This app is designed to explore the Streamlit Sharing runtime a bit.
 
 ## ToDo
 
-- [ ] adjust color theme for plotly tables
-- [ ] fix plotly table issues
-- [ ] fix plotly table height
 - [x] try tabulate instead of plotly tables
-- [ ] remove plotly at all
+- [x] remove plotly at all
 - [ ] add more documentation in README
 
 ---
@@ -106,11 +103,11 @@ fig.show()
 A Dockerfile is also provided for local testing of the Streamlit app.
 
 ```sh
-docker build -t franky1/docker-streamlit-app:latest .
-docker run -ti -p 8080:8080 --rm franky1/docker-streamlit-app:latest
-docker run -ti -p 8080:8080 -v $(pwd):/app --rm franky1/docker-streamlit-app:latest  # linux
-docker run -ti -p 8080:8080 -v ${pwd}:/app --rm franky1/docker-streamlit-app:latest  # powershell
-docker run -ti -p 8080:8080 -v %cd%:/app --rm franky1/docker-streamlit-app:latest  # cmd.exe
+docker build -t franky1/streamlit:latest .
+docker run -ti -p 8080:8080 --rm franky1/streamlit:latest
+docker run -ti -p 8080:8080 -v $(pwd):/app --rm franky1/streamlit:latest  # linux
+docker run -ti -p 8080:8080 -v ${pwd}:/app --rm franky1/streamlit:latest  # powershell
+docker run -ti -p 8080:8080 -v %cd%:/app --rm franky1/streamlit:latest  # cmd.exe
 docker run -ti --rm python:3.7.10-slim /bin/bash # testing python container
 ```
 

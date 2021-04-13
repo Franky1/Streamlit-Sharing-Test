@@ -10,7 +10,6 @@ import sys
 
 # external libraries
 import importlib_metadata
-import plotly.graph_objects as go
 import psutil
 import streamlit as st
 
@@ -78,7 +77,8 @@ def get_subprocess_pipdeptree():
 def get_subprocess_apt_list():
     # return subprocess.getstatusoutput(r'apt list --installed')
     # return subprocess.getstatusoutput(r'dpkg -l')
-    return subprocess.getstatusoutput(r"dpkg-query --show --showformat='${Package;-26} ${Version;-24} \t${binary:Synopsis}\n'")
+    # return subprocess.getstatusoutput(r"dpkg-query --show --showformat='${Package;-26} ${Version;-24} \t${binary:Synopsis}\n'")
+    return subprocess.getstatusoutput(r"dpkg-query --show --showformat='${Package} ${Version} ${binary:Synopsis}\n'")
 
 
 @st.cache
@@ -113,30 +113,6 @@ def tabulate_table_factory(headers, cells, showindex=False, tablefmt="github"):
     return tab
 
 
-def ploty_fig_table_factory(header, cells):
-    header = list([f'<b>{h}</b>' for h in header]) # bold header
-    fig = go.Figure(data=[go.Table(
-        header=dict(values=header,
-                    # line_color='#eeeeee',
-                    # fill_color='#B362FF',
-                    align='left',
-                    # height=40
-                    ),
-        cells=dict(values=cells,
-                    # line_color='#eeeeee',
-                    # fill_color='#2D2B55',
-                    align='left',
-                    # height=30
-                    ))
-        ])
-    fig.update_layout(margin_l=0, margin_r=0, margin_t=10, margin_b=0)
-    fig.update_layout(font_family="Arial", font_size=14)
-    fig.update_layout(dragmode="select", selectdirection="v")
-    fig.update_layout(autosize=True)  # does not work
-    # fig.update_layout(height=28*len(cells[0])+40)  # dynamic height
-    return fig
-
-
 def st_get_system_version():
     st.markdown("---")
     st.header("ℹ️ System Information")
@@ -147,20 +123,21 @@ def st_get_system_version():
     if isinstance(sysinfos, dict):
         headers=['Parameter', 'Value']
         cells=[list(sysinfos.keys()), list(sysinfos.values())]
-        # for key, value in sysinfos.items():
-        #     codeblock += f"{key.capitalize(): <17}: {value}\n"
-        # st.code(codeblock, language='logging')
-        fig = ploty_fig_table_factory(
-            header=headers,
-            cells=cells)
-        config = {'displayModeBar': False}
-        # st.plotly_chart(fig, use_container_width=True, config=config)
         # st.code(tabulate_table_factory(headers, cells, showindex=True), language='logging')
         st.markdown(tabulate_table_factory(headers, cells, showindex=False))
     else:
         st.error('Acquisition of system infos failed')
         st.code(sysinfos, language='logging')
     return codeblock
+
+
+def get_apt_package_list(output):
+    out = list()
+    lines = output.splitlines()
+    for line in lines:
+        a, b, c = line.split(maxsplit=2)
+        out.append([a, b, c])
+    return out
 
 
 def st_get_apt_packages():
@@ -171,10 +148,12 @@ def st_get_apt_packages():
     exitcode, output = get_subprocess_apt_list()
     if exitcode:
         st.warning('FAILED: dpkg-query --show --showformat')
-        # st.warning('FAILED: apt list --installed')
         st.code(output, language='logging')
     else:
-        st.code(output, language='logging')
+        headers = ['Package', 'Version', 'Description']
+        cells = get_apt_package_list(output)
+        st.markdown(tabulate_table_factory(headers, cells, showindex=True))
+        # st.code(output, language='logging')
     return output
 
 
@@ -226,25 +205,14 @@ def st_get_pip_list():
         jsonified = json.loads(output)
         jsonified = get_dict_from_piplist(jsonified)
         if isinstance(jsonified, dict):
+            jsonified = sorted(jsonified.items())
             headers = ["Package", "Version"]
             cells=[list(jsonified.keys()), list(jsonified.values())]
-            header1 = "Package<br>"
-            header2 = "Version<br>"
-            fig = ploty_fig_table_factory(
-                header=headers,
-                cells=cells)
-            config = {'displayModeBar': False}
-            # st.plotly_chart(fig, use_container_width=True, config=config)
             st.markdown(tabulate_table_factory(headers, cells, showindex=True))
-        # st.json(jsonified)
         # st.code(output, language='logging')
-        # pip_list = json.loads(output)
-        # pip_list = list(dict({item['name'] : item['version']}) for item in pip_list)
-        # pip_list = tabulate(pip_list, headers=['Package', 'Version'], tablefmt="grid")
-        # pip_list = tabulate(pip_list, tablefmt="html")
+        # pip_list = tabulate(pip_list, headers=['Package', 'Version'], tablefmt="html")
         # components.html(pip_list)
         # st.json(pip_list)
-        # st.table(pd.DataFrame.from_dict(pip_list, orient='index', dtype='str', columns=['Version']))
     return output
 
 
@@ -282,16 +250,7 @@ def st_get_pipdeptree():
         if isinstance(jsonified, dict):
             headers = ["Package\nkey:package_name:installed_version", "Dependencies\nkey:package_name:installed_version:required_version"]
             cells=[list(jsonified.keys()), list(jsonified.values())]
-            header1 = "Package<br>key:package_name:installed_version"
-            header2 = "Dependencies<br>key:package_name:installed_version:required_version"
-            fig = ploty_fig_table_factory(
-                header=[header1, header2],
-                cells=cells)
-            config = {'displayModeBar': False}
-            # st.plotly_chart(fig, use_container_width=True, config=config)
             st.code(tabulate_table_factory(headers, cells, showindex=True, tablefmt="grid"), language="logging")
-        # else:
-        #     st.code(get_dict_from_pipdeptree(jsonified), language='logging')
     return output
 
 

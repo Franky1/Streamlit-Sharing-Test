@@ -1,6 +1,5 @@
 psutil
 pipdeptree
 importlib_metadata
-plotly
 tabulate
 streamlit
