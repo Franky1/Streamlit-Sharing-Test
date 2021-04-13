@@ -28,6 +28,8 @@ This app is designed to explore the Streamlit Sharing runtime a bit.
 - [ ] adjust color theme for plotly tables
 - [ ] fix plotly table issues
 - [ ] fix plotly table height
+- [x] try tabulate instead of plotly tables
+- [ ] remove plotly at all
 - [ ] add more documentation in README
 
 ---
@@ -119,4 +121,4 @@ Open local docker streamlit app site: <http://localhost:8080/>
 ## Status
 
 - WORK IN PROGRESS - not finished yet
-- Last changes: 11.04.2021
+- Last changes: 13.04.2021

@@ -15,7 +15,7 @@ import psutil
 import streamlit as st
 
 # import streamlit.components.v1 as components
-# from tabulate import tabulate
+from tabulate import tabulate
 
 output_text = dict()
 
@@ -106,18 +106,24 @@ def st_get_python_version():
     return output
 
 
+def tabulate_table_factory(headers, cells, showindex=False, tablefmt="github"):
+    cells =  [*zip(*cells)]  # Transpose the 2D array of cells
+    tab = tabulate(cells, headers=headers, showindex=showindex, tablefmt=tablefmt)
+    return tab
+
+
 def ploty_fig_table_factory(header, cells):
     header = list([f'<b>{h}</b>' for h in header]) # bold header
     fig = go.Figure(data=[go.Table(
         header=dict(values=header,
-                    line_color='#eeeeee',
-                    fill_color='#B362FF',
+                    # line_color='#eeeeee',
+                    # fill_color='#B362FF',
                     align='left',
                     # height=40
                     ),
         cells=dict(values=cells,
-                    line_color='#eeeeee',
-                    fill_color='#2D2B55',
+                    # line_color='#eeeeee',
+                    # fill_color='#2D2B55',
                     align='left',
                     # height=30
                     ))
@@ -138,14 +144,18 @@ def st_get_system_version():
     codeblock = str()
     sysinfos = getSystemInfoDict()
     if isinstance(sysinfos, dict):
+        headers=['Parameter', 'Value']
+        cells=[list(sysinfos.keys()), list(sysinfos.values())]
         # for key, value in sysinfos.items():
         #     codeblock += f"{key.capitalize(): <17}: {value}\n"
         # st.code(codeblock, language='logging')
         fig = ploty_fig_table_factory(
-            header=['Parameter', 'Value'],
-            cells=[list(sysinfos.keys()), list(sysinfos.values())])
+            header=headers,
+            cells=cells)
         config = {'displayModeBar': False}
-        st.plotly_chart(fig, use_container_width=True, config=config)
+        # st.plotly_chart(fig, use_container_width=True, config=config)
+        # st.code(tabulate_table_factory(headers, cells, showindex=True), language='logging')
+        st.markdown(tabulate_table_factory(headers, cells, showindex=False))
     else:
         st.error('Acquisition of system infos failed')
         st.code(sysinfos, language='logging')
@@ -215,14 +225,16 @@ def st_get_pip_list():
         jsonified = json.loads(output)
         jsonified = get_dict_from_piplist(jsonified)
         if isinstance(jsonified, dict):
+            headers = ["Package", "Version"]
+            cells=[list(jsonified.keys()), list(jsonified.values())]
             header1 = "Package<br>"
             header2 = "Version<br>"
             fig = ploty_fig_table_factory(
-                header=[header1, header2],
-                cells=[list(jsonified.keys()), list(jsonified.values())])
+                header=headers,
+                cells=cells)
             config = {'displayModeBar': False}
-            st.plotly_chart(fig, use_container_width=True, config=config)
-
+            # st.plotly_chart(fig, use_container_width=True, config=config)
+            st.markdown(tabulate_table_factory(headers, cells, showindex=True))
         # st.json(jsonified)
         # st.code(output, language='logging')
         # pip_list = json.loads(output)
@@ -240,15 +252,15 @@ def get_dependencies(jsonified):
     if jsonified:
         for pkg in jsonified:
             pkg_str = f"{pkg['key']}:{pkg['package_name']}:{pkg['installed_version']}:{pkg['required_version']}"
-            dependencies += f"{pkg_str}<br>"
-    return dependencies
+            dependencies += f"{pkg_str}\n"
+    return dependencies.strip()
 
 
 def get_dict_from_pipdeptree(jsonified):
     packages = dict()
     for elem in jsonified:
         pkg = elem.get('package')
-        pkg_str = f"{pkg['key']}:{pkg['package_name']}:{pkg['installed_version']}<br>"
+        pkg_str = f"{pkg['key']}:{pkg['package_name']}:{pkg['installed_version']}"
         dep = get_dependencies(elem.get('dependencies'))
         packages[pkg_str] = dep
     return dict(sorted(packages.items()))
@@ -267,13 +279,16 @@ def st_get_pipdeptree():
         jsonified = json.loads(output)
         jsonified = get_dict_from_pipdeptree(jsonified)
         if isinstance(jsonified, dict):
+            headers = ["Package\nkey:package_name:installed_version", "Dependencies\nkey:package_name:installed_version:required_version"]
+            cells=[list(jsonified.keys()), list(jsonified.values())]
             header1 = "Package<br>key:package_name:installed_version"
             header2 = "Dependencies<br>key:package_name:installed_version:required_version"
             fig = ploty_fig_table_factory(
                 header=[header1, header2],
-                cells=[list(jsonified.keys()), list(jsonified.values())])
+                cells=cells)
             config = {'displayModeBar': False}
-            st.plotly_chart(fig, use_container_width=True, config=config)
+            # st.plotly_chart(fig, use_container_width=True, config=config)
+            st.code(tabulate_table_factory(headers, cells, showindex=True, tablefmt="grid"), language="logging")
         # else:
         #     st.code(get_dict_from_pipdeptree(jsonified), language='logging')
     return output
@@ -376,8 +391,8 @@ if __name__ == "__main__":
     # output_text['freeze'] = st_get_pip_freeze()
     output_text['pip'] = st_get_pip_list()
     output_text['pipdeptree'] = st_get_pipdeptree()
-    # output_text['modules'] = st_get_packages_distributions()
+    output_text['modules'] = st_get_packages_distributions()
     st_download_info(output_text)
-    # st_run_shell_commands()
+    st_run_shell_commands()
     # st_test_pip_import(packages)
     st_rerun()
