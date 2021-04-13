@@ -26,7 +26,7 @@ def getSystemInfoDict():
         info['platform.release'] = platform.release()
         info['platform.version'] = platform.version()
         info['platform.machine'] = platform.machine()
-        info['platform.node'] = platform.node()
+        # info['platform.node'] = platform.node()
         info['socket.gethostname'] = socket.gethostname()
         info['ip-address'] = socket.gethostbyname(socket.gethostname())
         info['platform.processor'] = platform.processor()
@@ -154,7 +154,6 @@ def st_get_apt_packages():
         headers = ['Package', 'Version', 'Description']
         cells = get_apt_package_list(output)
         st.markdown(tabulate_table_factory(headers, cells, showindex=True))
-        # st.code(output, language='logging')
     return output
 
 
@@ -220,7 +219,7 @@ def get_dependencies(jsonified):
     dependencies = str()
     if jsonified:
         for pkg in jsonified:
-            pkg_str = f"{pkg['key']}:{pkg['package_name']}:{pkg['installed_version']}:{pkg['required_version']}"
+            pkg_str = f"{pkg['key']} : {pkg['package_name']} : {pkg['installed_version']} : {pkg['required_version']}"
             dependencies += f"{pkg_str}\n"
     return dependencies.strip()
 
@@ -229,7 +228,7 @@ def get_dict_from_pipdeptree(jsonified):
     packages = dict()
     for elem in jsonified:
         pkg = elem.get('package')
-        pkg_str = f"{pkg['key']}:{pkg['package_name']}:{pkg['installed_version']}"
+        pkg_str = f"{pkg['key']} : {pkg['package_name']} : {pkg['installed_version']}"
         dep = get_dependencies(elem.get('dependencies'))
         packages[pkg_str] = dep
     return dict(sorted(packages.items()))
@@ -248,9 +247,10 @@ def st_get_pipdeptree():
         jsonified = json.loads(output)
         jsonified = get_dict_from_pipdeptree(jsonified)
         if isinstance(jsonified, dict):
-            headers = ["Package\nkey:package_name:installed_version", "Dependencies\nkey:package_name:installed_version:required_version"]
+            headers = ["Package (key : package_name : installed_version)", "Dependencies (key : package_name : installed_version : required_version)"]
             cells=[list(jsonified.keys()), list(jsonified.values())]
-            st.code(tabulate_table_factory(headers, cells, showindex=True, tablefmt="grid"), language="logging")
+            table = tabulate_table_factory(headers, cells, showindex=True, tablefmt="pipe")
+            st.markdown(table)
     return output
 
 
