@@ -26,10 +26,11 @@ def getSystemInfoDict():
         info['platform.system'] = platform.system()
         info['platform.release'] = platform.release()
         info['platform.version'] = platform.version()
-        info['architecture'] = platform.machine()
-        info['hostname'] = socket.gethostname()
+        info['platform.machine'] = platform.machine()
+        info['platform.node'] = platform.node()
+        info['socket.gethostname'] = socket.gethostname()
         info['ip-address'] = socket.gethostbyname(socket.gethostname())
-        info['processor'] = platform.processor()
+        info['platform.processor'] = platform.processor()
         info['ram'] = str(
             round(psutil.virtual_memory().total / (1024.0 ** 3))) + " GB"
         return info
