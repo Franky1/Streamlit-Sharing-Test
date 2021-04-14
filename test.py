@@ -1,5 +1,6 @@
 import importlib_metadata
 
+
 def get_packages_distributions():
     packages = importlib_metadata.packages_distributions()
     packages = list(x for x in packages)

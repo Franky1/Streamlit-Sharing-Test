@@ -18,6 +18,7 @@ from tabulate import tabulate
 
 output_text = dict()
 
+
 @st.cache
 def getSystemInfoDict():
     try:
@@ -26,7 +27,6 @@ def getSystemInfoDict():
         info['platform.release'] = platform.release()
         info['platform.version'] = platform.version()
         info['platform.machine'] = platform.machine()
-        # info['platform.node'] = platform.node()
         info['socket.gethostname'] = socket.gethostname()
         info['ip-address'] = socket.gethostbyname(socket.gethostname())
         info['platform.processor'] = platform.processor()
@@ -108,7 +108,7 @@ def st_get_python_version():
 
 
 def tabulate_table_factory(headers, cells, showindex=False, tablefmt="github"):
-    cells =  [*zip(*cells)]  # Transpose the 2D array of cells
+    cells = [*zip(*cells)]  # Transpose the 2D array of cells
     tab = tabulate(cells, headers=headers, showindex=showindex, tablefmt=tablefmt)
     return tab
 
@@ -118,17 +118,17 @@ def st_get_system_version():
     st.header("ℹ️ System Information")
     st.markdown(
         "Show some basic system informations about the runtime")
-    codeblock = str()
+    stringblock = str()
     sysinfos = getSystemInfoDict()
     if isinstance(sysinfos, dict):
-        headers=['Parameter', 'Value']
-        cells=[list(sysinfos.keys()), list(sysinfos.values())]
-        # st.code(tabulate_table_factory(headers, cells, showindex=True), language='logging')
+        headers = ['Parameter', 'Value']
+        cells = [list(sysinfos.keys()), list(sysinfos.values())]
         st.markdown(tabulate_table_factory(headers, cells, showindex=False))
+        stringblock = tabulate_table_factory(headers, cells, showindex=False, tablefmt="fancy_grid")
     else:
         st.error('Acquisition of system infos failed')
         st.code(sysinfos, language='logging')
-    return codeblock
+    return stringblock
 
 
 def get_apt_package_list(output):
@@ -137,7 +137,7 @@ def get_apt_package_list(output):
     for line in lines:
         a, b, c = line.split(maxsplit=2)
         out.append([a, b, c])
-    out =  [*zip(*out)]  # Transpose the 2D array of cells
+    out = [*zip(*out)]  # Transpose the 2D array of cells
     return out
 
 
@@ -147,6 +147,7 @@ def st_get_apt_packages():
     st.markdown(
         "List all installed **`apt`** packages of the runtime - acquired with **`dpkg-query --show --showformat`**")
     exitcode, output = get_subprocess_apt_list()
+    stringblock = str()
     if exitcode:
         st.warning('FAILED: dpkg-query --show --showformat')
         st.code(output, language='logging')
@@ -154,7 +155,8 @@ def st_get_apt_packages():
         headers = ['Package', 'Version', 'Description']
         cells = get_apt_package_list(output)
         st.markdown(tabulate_table_factory(headers, cells, showindex=True))
-    return output
+        stringblock = tabulate_table_factory(headers, cells, showindex=True, tablefmt="fancy_grid")
+    return stringblock
 
 
 def st_get_apt_sources():
@@ -198,6 +200,7 @@ def st_get_pip_list():
     st.markdown(
         "List all installed **`pip`** packages of the runtime - acquired with **`pip list`**")
     exitcode, output = get_subprocess_pip_list()
+    stringblock = str()
     if exitcode:
         st.error('FAILED: pip list')
         st.code(output, language='logging')
@@ -206,13 +209,10 @@ def st_get_pip_list():
         jsonified = get_dict_from_piplist(jsonified)
         if isinstance(jsonified, dict):
             headers = ["Package", "Version"]
-            cells=[list(jsonified.keys()), list(jsonified.values())]
+            cells = [list(jsonified.keys()), list(jsonified.values())]
             st.markdown(tabulate_table_factory(headers, cells, showindex=True))
-        # st.code(output, language='logging')
-        # pip_list = tabulate(pip_list, headers=['Package', 'Version'], tablefmt="html")
-        # components.html(pip_list)
-        # st.json(pip_list)
-    return output
+            stringblock = tabulate_table_factory(headers, cells, showindex=True, tablefmt="fancy_grid")
+    return stringblock
 
 
 def get_dependencies(jsonified):
@@ -240,6 +240,7 @@ def st_get_pipdeptree():
     st.markdown(
         "List all installed python packages of the runtime - acquired with **`pipdeptree`**")
     exitcode, output = get_subprocess_pipdeptree()
+    stringblock = str()
     if exitcode:
         st.warning('FAILED: pipdeptree --json')
         st.code(output, language='logging')
@@ -248,10 +249,11 @@ def st_get_pipdeptree():
         jsonified = get_dict_from_pipdeptree(jsonified)
         if isinstance(jsonified, dict):
             headers = ["Package (key : package_name : installed_version)", "Dependencies (key : package_name : installed_version : required_version)"]
-            cells=[list(jsonified.keys()), list(jsonified.values())]
+            cells = [list(jsonified.keys()), list(jsonified.values())]
             table = tabulate_table_factory(headers, cells, showindex=True, tablefmt="pipe")
             st.markdown(table)
-    return output
+            stringblock = tabulate_table_factory(headers, cells, showindex=True, tablefmt="fancy_grid")
+    return stringblock
 
 
 def chunkify(lst, n):
@@ -276,6 +278,7 @@ def st_get_packages_distributions():
     st.markdown(
         "List all importable python modules of the runtime - acquired with **`importlib_metadata.packages_distributions`**")
     packages = get_packages_distributions()
+    stringblock = str()
     if isinstance(packages, list):
         chunks = 6
         cells = chunkify(packages, chunks)
@@ -283,8 +286,8 @@ def st_get_packages_distributions():
         table = tabulate_table_factory(headers=range(chunks), cells=cells, showindex=True, tablefmt="pipe")
         st.info(f'Number of Python modules: {len(packages)}')
         st.markdown(table)
-    output = '\n'.join(packages)
-    return output
+        stringblock = tabulate_table_factory(headers=range(chunks), cells=cells, showindex=True, tablefmt="fancy_grid")
+    return stringblock
 
 
 def st_test_pip_import(packages):
@@ -310,7 +313,7 @@ def generate_output_text(text_dict):
         output += "==========================================================================================\n"
         output += '\n'
         output += f'{value}\n'
-        output += '\n\n\n'
+        output += '\n\n'
     return output
 
 
@@ -366,10 +369,10 @@ if __name__ == "__main__":
         This app is designed to explore the Streamlit Sharing runtime a bit. <br>
         Color design was taken from the **`Shades of Purple`** theme from VSCode.
         """, unsafe_allow_html=True)
-    output_text['python'] = st_get_python_version()
-    st_get_system_version()
-    output_text['apt'] = st_get_apt_packages()
-    output_text['sources'] = st_get_apt_sources()
+    output_text['Python'] = st_get_python_version()
+    output_text['System'] = st_get_system_version()
+    output_text['Apt'] = st_get_apt_packages()
+    output_text['Sources'] = st_get_apt_sources()
     # output_text['freeze'] = st_get_pip_freeze()
     output_text['pip'] = st_get_pip_list()
     output_text['pipdeptree'] = st_get_pipdeptree()
