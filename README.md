@@ -25,8 +25,7 @@ This app is designed to explore the Streamlit Sharing runtime a bit.
 
 ## ToDo
 
-- [x] try tabulate instead of plotly tables
-- [x] remove plotly at all
+- [ ] fix export txt file content
 - [ ] add more documentation in README
 
 ---

@@ -254,14 +254,36 @@ def st_get_pipdeptree():
     return output
 
 
+def chunkify(lst, n):
+    return [lst[i::n] for i in range(n)]
+
+
+def fill_chunks_equally_with_empty_values(cells):
+    output = list()
+    maxlength = max(list(len(col) for col in cells))
+    for col in cells:
+        length = len(col)
+        if length < maxlength:
+            for _ in range(maxlength - length):
+                col.append('')
+        output.append(col)
+    return output
+
+
 def st_get_packages_distributions():
     st.markdown("---")
     st.header("🐍 Pip Modules")
     st.markdown(
         "List all importable python modules of the runtime - acquired with **`importlib_metadata.packages_distributions`**")
     packages = get_packages_distributions()
+    if isinstance(packages, list):
+        chunks = 6
+        cells = chunkify(packages, chunks)
+        cells = fill_chunks_equally_with_empty_values(cells)
+        table = tabulate_table_factory(headers=range(chunks), cells=cells, showindex=True, tablefmt="pipe")
+        st.info(f'Number of Python modules: {len(packages)}')
+        st.markdown(table)
     output = '\n'.join(packages)
-    st.code(output, language='logging')
     return output
 
 
