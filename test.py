@@ -33,6 +33,7 @@ cells = chunkify(packages, chunks)
 for c in cells:
     print(len(c))
 
+
 cells = fill_chunks_equally_with_empty_values(cells)
 print('-------------')
 # print(cells)
