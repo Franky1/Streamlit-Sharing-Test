@@ -26,6 +26,7 @@ This app is designed to explore the Streamlit Sharing runtime a bit.
 ## ToDo
 
 - [ ] add more documentation in README
+- [ ] pipdeptree fails currently on streamlit sharing(?)
 
 ---
 
