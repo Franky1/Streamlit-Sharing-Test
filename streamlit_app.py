@@ -4,6 +4,7 @@ import importlib
 import json
 import logging
 import platform
+import shutil
 import socket
 import subprocess
 import sys
@@ -76,8 +77,11 @@ def get_subprocess_pip_list() -> TypeTupleOut:
 
 
 @st.cache
-def get_subprocess_pipdeptree() -> TypeTupleOut:
-    return subprocess.getstatusoutput(r'pipdeptree --json')
+def get_subprocess_pipdeptree(fullpath=None) -> TypeTupleOut:
+    if fullpath:
+        return subprocess.getstatusoutput(rf'{fullpath} --json')
+    else:
+        return subprocess.getstatusoutput(r'pipdeptree --json')
 
 
 @st.cache
@@ -244,10 +248,11 @@ def st_get_pipdeptree() -> str:
     st.header("🐍 Pipdeptree Output")
     st.markdown(
         "List all installed python packages of the runtime - acquired with **`pipdeptree`**")
-    exitcode, output = get_subprocess_pipdeptree()
+    which = shutil.which("pipdeptree")  # workaround on streamlit sharing
+    exitcode, output = get_subprocess_pipdeptree(which)
     stringblock = str()
     if exitcode:
-        st.warning('FAILED: pipdeptree --json')
+        st.error(rf'FAILED: {which} --json')
         st.code(output, language='logging')
     else:
         jsonified = json.loads(output)
