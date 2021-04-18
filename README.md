@@ -26,7 +26,6 @@ This app is designed to explore the Streamlit Sharing runtime a bit.
 ## ToDo
 
 - [ ] add more documentation in README
-- [ ] pipdeptree fails currently on streamlit sharing(?)
 
 ---
 
@@ -132,4 +131,4 @@ Port `8501` is the default port for Streamlit.
 ## Status
 
 - WORK IN PROGRESS - not finished yet
-- Last changes: 13.04.2021
+- Last changes: 18.04.2021
