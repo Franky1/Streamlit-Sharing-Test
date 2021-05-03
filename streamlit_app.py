@@ -73,7 +73,7 @@ def get_subprocess_pip_freeze() -> TypeTupleOut:
 
 @st.cache
 def get_subprocess_pip_list() -> TypeTupleOut:
-    return subprocess.getstatusoutput(r'pip list --format json')
+    return subprocess.getstatusoutput(r'pip list --disable-pip-version-check --format json')
 
 
 @st.cache
