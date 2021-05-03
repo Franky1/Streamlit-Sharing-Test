@@ -12,3 +12,7 @@ backgroundColor="#28284e"
 secondaryBackgroundColor="#222145"
 textColor="#ffffff"
 font="sans serif"
+
+[server]
+headless = true
+# fileWatcherType = "poll"

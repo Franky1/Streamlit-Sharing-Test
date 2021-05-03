@@ -255,7 +255,7 @@ def st_get_pipdeptree() -> str:
     st.markdown(
         "List all installed python packages of the runtime - acquired with **`pipdeptree`**")
     # FIXME: pipdeptree is not found anymore
-    results = glob.glob('../../home/**/pipdeptree')
+    results = glob.glob('/home/**/pipdeptree', recursive=True)
     st.code(results, language='logging')
     which = shutil.which(cmd="pipdeptree", path='/home')  # workaround on streamlit sharing
     # which = "pipdeptree"
