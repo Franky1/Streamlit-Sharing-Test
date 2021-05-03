@@ -248,7 +248,8 @@ def st_get_pipdeptree() -> str:
     st.header("🐍 Pipdeptree Output")
     st.markdown(
         "List all installed python packages of the runtime - acquired with **`pipdeptree`**")
-    which = shutil.which("pipdeptree")  # workaround on streamlit sharing
+    # which = shutil.which("pipdeptree")  # workaround on streamlit sharing
+    which = "pipdeptree"
     exitcode, output = get_subprocess_pipdeptree(which)
     stringblock = str()
     if exitcode:
