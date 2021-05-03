@@ -1,5 +1,6 @@
 # standard libraries
 import base64
+import glob
 import importlib
 import json
 import logging
@@ -251,8 +252,11 @@ def get_dict_from_pipdeptree(jsonified: Dict) -> TypeDictStr:
 def st_get_pipdeptree() -> str:
     st.markdown("---")
     st.header("🐍 Pipdeptree Output")
+    # FIXME: pipdeptree is not found anymore
     st.markdown(
         "List all installed python packages of the runtime - acquired with **`pipdeptree`**")
+    results = glob.glob('/home/**/pipdeptree')
+    st.code(results, language='logging')
     which = shutil.which(cmd="pipdeptree", path='/home')  # workaround on streamlit sharing
     # which = "pipdeptree"
     st.info(which)
