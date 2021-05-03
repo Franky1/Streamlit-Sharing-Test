@@ -213,14 +213,20 @@ def st_get_pip_list() -> str:
         st.error('FAILED: pip list')
         st.code(output, language='logging')
     else:
-        jsonified = json.loads(output)
-        jsonified = get_dict_from_piplist(jsonified)
-        if isinstance(jsonified, dict):
-            headers = ["Package", "Version"]
-            cells = [list(jsonified.keys()), list(jsonified.values())]
-            st.info(f'Number of Python packages: {len(jsonified)}')
-            st.markdown(tabulate_table_factory(headers, cells, showindex=True))
-            stringblock = tabulate_table_factory(headers, cells, showindex=True, tablefmt="fancy_grid")
+        # FIXME: json.loads fails here
+        try:
+            jsonified = json.loads(output)
+            jsonified = get_dict_from_piplist(jsonified)
+        except Exception as err:
+            st.error(str(err))
+            st.code(output, language='logging')
+        else:
+            if isinstance(jsonified, dict):
+                headers = ["Package", "Version"]
+                cells = [list(jsonified.keys()), list(jsonified.values())]
+                st.info(f'Number of Python packages: {len(jsonified)}')
+                st.markdown(tabulate_table_factory(headers, cells, showindex=True))
+                stringblock = tabulate_table_factory(headers, cells, showindex=True, tablefmt="fancy_grid")
     return stringblock
 
 
