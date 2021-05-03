@@ -213,7 +213,6 @@ def st_get_pip_list() -> str:
         st.error('FAILED: pip list')
         st.code(output, language='logging')
     else:
-        # FIXME: json.loads fails here
         try:
             jsonified = json.loads(output)
             jsonified = get_dict_from_piplist(jsonified)
@@ -254,8 +253,8 @@ def st_get_pipdeptree() -> str:
     st.header("🐍 Pipdeptree Output")
     st.markdown(
         "List all installed python packages of the runtime - acquired with **`pipdeptree`**")
-    # which = shutil.which("pipdeptree")  # workaround on streamlit sharing
-    which = "pipdeptree"
+    which = shutil.which(cmd="pipdeptree", path='../../home')  # workaround on streamlit sharing
+    # which = "pipdeptree"
     exitcode, output = get_subprocess_pipdeptree(which)
     stringblock = str()
     if exitcode:
