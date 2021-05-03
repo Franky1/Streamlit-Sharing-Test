@@ -5,7 +5,6 @@ import importlib
 import json
 import logging
 import platform
-import shutil
 import socket
 import subprocess
 import sys
@@ -15,7 +14,6 @@ from typing import Dict, List, Tuple, Union
 import importlib_metadata
 import psutil
 import streamlit as st
-# import streamlit.components.v1 as components
 from tabulate import tabulate
 
 # Type Hint Definitions:
@@ -254,13 +252,9 @@ def st_get_pipdeptree() -> str:
     st.header("🐍 Pipdeptree Output")
     st.markdown(
         "List all installed python packages of the runtime - acquired with **`pipdeptree`**")
-    # FIXME: pipdeptree is not found anymore
-    results = glob.glob('/home/**/pipdeptree', recursive=True)
-    # st.code(results, language='logging')
-    # which = shutil.which(cmd="pipdeptree", path='/home')  # workaround on streamlit sharing
-    # which = "pipdeptree"
+    results = glob.glob('/home/**/pipdeptree', recursive=True)  # workaround on streamlit sharing
     which = results[0]
-    st.info(which)
+    # st.info(which)
     exitcode, output = get_subprocess_pipdeptree(which)
     stringblock = str()
     if exitcode:

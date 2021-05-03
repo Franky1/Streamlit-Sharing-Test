@@ -30,3 +30,4 @@ MANIFEST
 *.exe
 *.md
 LICENSE
+.mypy_cache/

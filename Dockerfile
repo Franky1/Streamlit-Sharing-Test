@@ -1,7 +1,7 @@
 FROM python:3.7.10-slim
 
 WORKDIR /app
-COPY . ./
+COPY . .
 
 # CAVEAT: packages.txt must exist and have Linux LF only!
 RUN apt-get update
