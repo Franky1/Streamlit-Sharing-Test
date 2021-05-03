@@ -255,6 +255,7 @@ def st_get_pipdeptree() -> str:
         "List all installed python packages of the runtime - acquired with **`pipdeptree`**")
     which = shutil.which(cmd="pipdeptree", path='/home')  # workaround on streamlit sharing
     # which = "pipdeptree"
+    st.info(which)
     exitcode, output = get_subprocess_pipdeptree(which)
     stringblock = str()
     if exitcode:
