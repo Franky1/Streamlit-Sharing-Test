@@ -114,11 +114,11 @@ fig.show()
 A Dockerfile is also provided for local testing of the Streamlit app.
 
 ```sh
-docker build -t franky1/streamlit:latest .
-docker run -ti -p 8501:8501 --rm franky1/streamlit:latest
-docker run -ti -p 8501:8501 -v $(pwd):/app --rm franky1/streamlit:latest  # linux
-docker run -ti -p 8501:8501 -v ${pwd}:/app --rm franky1/streamlit:latest  # powershell
-docker run -ti -p 8501:8501 -v %cd%:/app --rm franky1/streamlit:latest  # cmd.exe
+docker build -t streamlit:latest .
+docker run -ti -p 8501:8501 --rm streamlit:latest
+docker run -ti -p 8501:8501 -v $(pwd):/app --rm streamlit:latest  # linux
+docker run -ti -p 8501:8501 -v ${pwd}:/app --rm streamlit:latest  # powershell
+docker run -ti -p 8501:8501 -v %cd%:/app --rm streamlit:latest  # cmd.exe
 docker run -ti --rm python:3.7.10-slim /bin/bash # testing python container
 ```
 
