@@ -23,11 +23,12 @@ TypeListListStr = List[List[str]]
 TypeTupleOut = Tuple[int, str]
 
 # Output Text collector:
-output_text: TypeDictStr = dict()
+output_text: TypeDictStr = {}
 
 
 @st.cache
 def getSystemInfoDict() -> Union[TypeDictStr, Exception]:
+    # sourcery skip: dict-literal, merge-dict-assign
     try:
         info = dict()
         info['platform.system'] = platform.system()
@@ -47,7 +48,7 @@ def getSystemInfoDict() -> Union[TypeDictStr, Exception]:
 
 def split_pip_freeze(output: str) -> TypeDictStr:
     lines = output.splitlines()
-    packages = dict()
+    packages = {}
     for line in lines:
         if "==" in line:
             pkg, vers = line.split("==", 1)
@@ -96,10 +97,10 @@ def get_subprocess_apt_sources() -> TypeTupleOut:
 @st.cache
 def get_packages_distributions() -> TypeListStr:
     metadata = importlib_metadata.packages_distributions()
-    packages = list(x for x in metadata)
+    packages = list(metadata)
     packages = list(filter(lambda x: not x[:1].isdigit(), packages))
     packages = list(filter(lambda x: not x.startswith('_'), packages))
-    packages = list(filter(lambda x: not any(e in x for e in r'\/'), packages))
+    packages = list(filter(lambda x: all(e not in x for e in r'\/'), packages))
     packages = sorted(packages, key=lambda x: x.lower())
     return packages
 
@@ -139,13 +140,12 @@ def st_get_system_version() -> str:
 
 
 def get_apt_package_list(output: str) -> List:
-    out = list()
+    out = []
     lines = output.splitlines()
     for line in lines:
         a, b, c = line.split(maxsplit=2)
         out.append([a, b, c])
-    ret = [*zip(*out)]  # Transpose the 2D array of cells
-    return ret
+    return [*zip(*out)]
 
 
 def st_get_apt_packages() -> str:
@@ -174,9 +174,7 @@ def st_get_apt_sources() -> str:
     exitcode, output = get_subprocess_apt_sources()
     if exitcode:
         st.warning('FAILED: cat /etc/apt/sources.list')
-        st.code(output, language='logging')
-    else:
-        st.code(output, language='logging')
+    st.code(output, language='logging')
     return output
 
 
@@ -186,14 +184,12 @@ def st_get_pip_freeze() -> str:
     exitcode, output = get_subprocess_pip_freeze()
     if exitcode:
         st.error('FAILED: pip freeze')
-        st.code(output, language='logging')
-    else:
-        st.code(output, language='logging')
+    st.code(output, language='logging')
     return output
 
 
 def get_dict_from_piplist(jsonified: Dict) -> TypeDictStr:
-    packages = dict()
+    packages = {}
     for elem in jsonified:
         pkg = elem.get('name')
         ver = elem.get('version')
@@ -238,7 +234,7 @@ def get_dependencies(jsonified: Dict) -> str:
 
 
 def get_dict_from_pipdeptree(jsonified: Dict) -> TypeDictStr:
-    packages = dict()
+    packages = {}
     for elem in jsonified:
         pkg = elem.get('package')
         pkg_str = f"{pkg['key']} : {pkg['package_name']} : {pkg['installed_version']}"
@@ -252,7 +248,8 @@ def st_get_pipdeptree() -> str:
     st.header("🐍 Pipdeptree Output")
     st.markdown(
         "List all installed python packages of the runtime - acquired with **`pipdeptree`**")
-    results = glob.glob('/home/**/pipdeptree', recursive=True)  # workaround on streamlit sharing
+    # results = glob.glob('/home/**/pipdeptree', recursive=True)  # workaround on streamlit sharing
+    results = glob.glob('/**/pipdeptree', recursive=True)
     which = results[0]
     # st.info(which)
     exitcode, output = get_subprocess_pipdeptree(which)
@@ -278,8 +275,8 @@ def chunkify(lst: List, n: int) -> TypeListListStr:
 
 
 def fill_chunks_equally_with_empty_values(cells: List) -> List:
-    output = list()
-    maxlength = max(list(len(col) for col in cells))
+    output = []
+    maxlength = max(len(col) for col in cells)
     for col in cells:
         length = len(col)
         if length < maxlength:
@@ -300,7 +297,7 @@ def st_get_packages_distributions() -> str:
         chunks = 6
         cells = chunkify(packages, chunks)
         cells = fill_chunks_equally_with_empty_values(cells)
-        headers = list(str(x) for x in range(chunks))
+        headers = [str(x) for x in range(chunks)]
         table = tabulate_table_factory(headers=headers, cells=cells, showindex=True, tablefmt="pipe")
         st.info(f'Number of Python modules: {len(packages)}')
         st.markdown(table)

@@ -6,8 +6,6 @@ As long as the app will be available on Streamlit Sharing, it can be found at th
 
 <https://share.streamlit.io/franky1/streamlit-sharing-test/main>
 
-> WORK IN PROGRESS
-
 ## Features
 
 This app is designed to explore the Streamlit Sharing runtime a bit.
@@ -20,12 +18,6 @@ This app is designed to explore the Streamlit Sharing runtime a bit.
 - List all available python modules
 - Manually run shell commands in the runtime
 - Export runtime informations to file
-
----
-
-## ToDo
-
-- [ ] add more documentation in README
 
 ---
 
@@ -46,7 +38,7 @@ This app is designed to explore the Streamlit Sharing runtime a bit.
 
 ### Checking apt packages manually with OS tools
 
-```sh
+```bash
 apt list --installed
 dpkg --list
 dpkg-query --show --showformat=format
@@ -114,12 +106,13 @@ fig.show()
 A Dockerfile is also provided for local testing of the Streamlit app.
 
 ```sh
-docker build -t streamlit:latest .
-docker run -ti -p 8501:8501 --rm streamlit:latest
-docker run -ti -p 8501:8501 -v $(pwd):/app --rm streamlit:latest  # linux
-docker run -ti -p 8501:8501 -v ${pwd}:/app --rm streamlit:latest  # powershell
-docker run -ti -p 8501:8501 -v %cd%:/app --rm streamlit:latest  # cmd.exe
-docker run -ti --rm python:3.7.10-slim /bin/bash # testing python container
+docker build -t streamlittest:latest .
+docker run -ti -p 8501:8501 --rm streamlittest:latest
+docker run -ti -p 8501:8501 --rm streamlittest:latest /bin/bash
+docker run -ti -p 8501:8501 -v $(pwd):/app --rm streamlittest:latest  # linux
+docker run -ti -p 8501:8501 -v ${pwd}:/app --rm streamlittest:latest  # powershell
+docker run -ti -p 8501:8501 -v %cd%:/app --rm streamlittest:latest  # cmd.exe
+docker run -ti --rm python:3.9-slim /bin/bash # testing python container
 ```
 
 Open local docker streamlit app site: <http://localhost:8501/>
@@ -130,5 +123,4 @@ Port `8501` is the default port for Streamlit.
 
 ## Status
 
-- WORK IN PROGRESS - not finished yet
-- Last changes: 18.04.2021
+- Last changes: 14.03.2022
