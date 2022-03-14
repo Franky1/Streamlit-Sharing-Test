@@ -248,8 +248,8 @@ def st_get_pipdeptree() -> str:
     st.header("🐍 Pipdeptree Output")
     st.markdown(
         "List all installed python packages of the runtime - acquired with **`pipdeptree`**")
-    # results = glob.glob('/home/**/pipdeptree', recursive=True)  # workaround on streamlit sharing
-    results = glob.glob('/**/pipdeptree', recursive=True)
+    results = glob.glob('/home/**/pipdeptree', recursive=True)  # workaround on streamlit sharing
+    # results = glob.glob('/**/pipdeptree', recursive=True)
     which = results[0]
     # st.info(which)
     exitcode, output = get_subprocess_pipdeptree(which)
