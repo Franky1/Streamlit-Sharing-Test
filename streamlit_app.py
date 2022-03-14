@@ -28,7 +28,6 @@ output_text: TypeDictStr = {}
 
 @st.cache
 def getSystemInfoDict() -> Union[TypeDictStr, Exception]:
-    # sourcery skip: dict-literal, merge-dict-assign
     try:
         info = dict()
         info['platform.system'] = platform.system()
@@ -37,7 +36,7 @@ def getSystemInfoDict() -> Union[TypeDictStr, Exception]:
         info['platform.machine'] = platform.machine()
         info['socket.gethostname'] = socket.gethostname()
         info['ip-address'] = socket.gethostbyname(socket.gethostname())
-        info['platform.processor'] = platform.processor()
+        # info['platform.processor'] = platform.processor()
         info['ram'] = str(
             round(psutil.virtual_memory().total / (1024.0 ** 3))) + " GB"
         return info
